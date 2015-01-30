@@ -6,7 +6,11 @@ Based on the initial version of the problem presented in the book
 
 
 ##### Compile 
-	mpicc -o eratosthenes eratosthenes.c 
+    mpicc -o eratosthenes_improved eratosthenes_improved.c
 
 ##### Run
-	mpirun -np 5 eratosthenes 152512534
+	mpirun -np 5 eratosthenes_improved 152512534
+
+###### Sample Output
+8577481 primes are less than or equal to 152512534
+Total elapsed time:   5.247906
