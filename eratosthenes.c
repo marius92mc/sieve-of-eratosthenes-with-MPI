@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "MyMPI.h"
-#define MIN(a, b) ((a) < (b)? (a): (b))
 
 int main(int argc, char** argv)
 {
