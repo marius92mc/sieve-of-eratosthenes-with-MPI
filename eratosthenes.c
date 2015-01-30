@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include "MyMPI.h"
 
+
 int main(int argc, char** argv)
 {
 	int 	count;        /* local prime count */ 
@@ -44,7 +45,6 @@ int main(int argc, char** argv)
 	MPI_Init(&argc, &argv);
 
 	/* start the timer */
-	
 	MPI_Barrier(MPI_COMM_WORLD);
 	elapsed_time = -MPI_Wtime();
 
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 
 	if (argc != 2)
 	{
-		if (!id)
+		if (id == 0) /* parent process */
 			printf("Command line: %s <m>\n", argv[0]);
 		MPI_Finalize();
 		exit(1);
@@ -63,27 +63,24 @@ int main(int argc, char** argv)
 
 	/* figure out this process's share of the array, as well as the 
    	   integers represented by the first and last array elements */
-	
-	low_value = 2 + BLOCK_LOW(id, p, n - 1);	
+	low_value  = 2 + BLOCK_LOW(id, p, n - 1);	
 	high_value = 2 + BLOCK_HIGH(id, p, n - 1);
 	size = BLOCK_SIZE(id, p, n - 1);
 	
 	/* bail out if all the primes used for sieving are not all held
 	   by process 0 */
-
 	proc0_size = (n - 1) / p;
 
 	if ((2 + proc0_size) < (int)sqrt((double)n))
 	{
-		if (!id)
+		if (id == 0) /* parent process */
 			printf("Too many processes\n");
 		MPI_Finalize();
 		exit(1);
 	} /* if */
 
 	/* allocate this process's share of the array */
-	
-	marked = (char*)malloc(size);
+	marked = (char*)malloc(size * sizeof(char));
 
 	if (marked == NULL)
 	{
@@ -95,7 +92,7 @@ int main(int argc, char** argv)
 	for (i = 0; i < size; i++)
 		marked[i] = 0;
 
-	if (!id)
+	if (id == 0) /* parent process */
 		index = 0;
 	prime = 2;
 
@@ -116,7 +113,7 @@ int main(int argc, char** argv)
 		for (i = first; i < size; i += prime)
 			marked[i] = 1; // ?? 
 		
-		if (!id)
+		if (id == 0) /* parent process */
 		{
 			while (marked[++index])
 				;
@@ -128,34 +125,26 @@ int main(int argc, char** argv)
 	while (prime * prime <= n);
 
 	count = 0;
-
 	for (i = 0; i < size; i++)
 		if (!marked[i])
 			count++;
 
-	MPI_Reduce(&count, &global_count, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+	MPI_Reduce(&count, &global_count, 1, MPI_INT, 
+			   MPI_SUM, 0, MPI_COMM_WORLD);
 
 	/* stop the timer */
 	elapsed_time += MPI_Wtime();
 
 	/* print the results */
-	if (!id)
+	if (id == 0) /* parent process */
 	{
-		printf("%d primes are less than or equal to %d\n", global_count, n);
-		printf("Total elapsed time: %10.6f\n", elapsed_time);
-	} 
+		printf("%d primes are less than or equal to %d\n", 
+			   global_count, n);
+		printf("Total elapsed time: %10.6f\n", 
+			   elapsed_time);
+	} /* if */
 
 	MPI_Finalize();
 
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
