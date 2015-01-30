@@ -41,6 +41,9 @@ int main(int argc, char** argv)
 	int 	proc0_size;   /* size of proc 0's subarray */
 	int 	prime;        /* current prime */
 	int 	size;         /* elements in marked string */
+	int     first_value_index;
+	int 	prime_step;
+	int     prime_doubled;
 
 	MPI_Init(&argc, &argv);
 
@@ -63,8 +66,8 @@ int main(int argc, char** argv)
 
 	/* figure out this process's share of the array, as well as the 
    	   integers represented by the first and last array elements */
-	low_value  = 2 + BLOCK_LOW(id, p, n - 1);	
-	high_value = 2 + BLOCK_HIGH(id, p, n - 1);
+	low_value  = BLOCK_FIRST + BLOCK_LOW(id, p, n - 1) * BLOCK_STEP;	
+	high_value = BLOCK_FIRST + BLOCK_HIGH(id, p, n - 1) * BLOCK_STEP;
 	size = BLOCK_SIZE(id, p, n - 1);
 	
 	/* bail out if all the primes used for sieving are not all held
@@ -81,7 +84,6 @@ int main(int argc, char** argv)
 
 	/* allocate this process's share of the array */
 	marked = (char*)malloc(size * sizeof(char));
-
 	if (marked == NULL)
 	{
 		printf("Cannot allocate enough memory\n");
@@ -94,36 +96,51 @@ int main(int argc, char** argv)
 
 	if (id == 0) /* parent process */
 		index = 0;
-	prime = 2;
+	prime = 3;
 
 	do 
 	{
 		if (prime * prime > low_value)
 		{
-			first = prime * prime - low_value;
+			first = prime * prime;
 		}
 		else 
 		{
 			if (!(low_value % prime))
-				first = 0;
+				first = low_value;
 			else 
-				first = prime - (low_value % prime);
+				first = prime - (low_value % prime) + low_value;
 		}
-
-		for (i = first; i < size; i += prime)
-			marked[i] = 1; // ?? 
+		
+		// Optimization1, consider only odd multiples of prime number
+		if ((first + prime) & 1) // is odd
+		   first += prime; 
+		
+		first_value_index = (first - BLOCK_FIRST) / BLOCK_STEP - 
+							BLOCK_LOW(id, p, n - 1);
+		prime_doubled = prime << 1;
+		prime_step = prime_doubled / BLOCK_STEP;	
+		for (i = first; i <= high_value; i += prime_doubled)
+		{
+			marked[first_value_index] = 1;
+			first_value_index += prime_step;
+		} /* for */
 		
 		if (id == 0) /* parent process */
 		{
-			while (marked[++index])
-				;
-			prime = index + 2;
-		}
+			do 
+			{
+				index++;
+			} /* do */
+			while (marked[index]);
+			prime = index * BLOCK_STEP + BLOCK_FIRST;
+		} /* if */
 
 		MPI_Bcast(&prime, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	} /* do */
 	while (prime * prime <= n);
 
+	/* count the number of primes numbers found on this process */
 	count = 0;
 	for (i = 0; i < size; i++)
 		if (!marked[i])
@@ -138,6 +155,7 @@ int main(int argc, char** argv)
 	/* print the results */
 	if (id == 0) /* parent process */
 	{
+		global_count += 1; // for the first prime, 2
 		printf("%d primes are less than or equal to %d\n", 
 			   global_count, n);
 		printf("Total elapsed time: %10.6f\n", 
