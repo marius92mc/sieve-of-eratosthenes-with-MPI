@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 	double  elapsed_time; /* parallel execution time */
 	int 	first;        /* index of first multiple */
 	int 	global_count; /* global prime count */
-	int	    high_value;   /* highest value on this proc */
+	int     high_value;   /* highest value on this proc */
 	int 	i;            /* */
 	int 	id;           /* process id number */
 	int 	index;        /* index of current prime */ 
@@ -63,11 +63,11 @@ int main(int argc, char** argv)
 
 	/* figure out this process's share of the array, as well as the 
    	   integers represented by the first and last array elements */
-	n--;
-	low_value = 2 + BLOCK_LOW(id, p, n);	
-	high_value = 2 + BLOCK_HIGH(id, p, n);
-	size = BLOCK_SIZE(id, p, n);
-	n++;
+	
+	low_value = 2 + BLOCK_LOW(id, p, n - 1);	
+	high_value = 2 + BLOCK_HIGH(id, p, n - 1);
+	size = BLOCK_SIZE(id, p, n - 1);
+	
 	/* bail out if all the primes used for sieving are not all held
 	   by process 0 */
 
