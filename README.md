@@ -1,7 +1,6 @@
 # MPI Sieve of Eratosthenes
 ###### MPI Parallel program in C for The Sieve of Eratosthenes - project for Parallel and Concurrent Programming course
 <br />
-<br />
 
 Based on the initial version of the problem presented in the book 
 "Parallel programming in C with MPI and openMP", by Quinn.
@@ -19,4 +18,5 @@ Based on the initial version of the problem presented in the book
 
 ###### Sample Output
 8577481 primes are less than or equal to 152512534
+<br />
 Total elapsed time:   5.247906
