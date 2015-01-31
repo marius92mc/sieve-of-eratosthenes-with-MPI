@@ -19,4 +19,4 @@ Based on the initial version of the problem presented in the book
 ###### Sample Output
 8577481 primes are less than or equal to 152512534
 <br />
-Total elapsed time:   5.247906
+Total elapsed time:   5.247906s
