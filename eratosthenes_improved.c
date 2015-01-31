@@ -203,7 +203,7 @@ int main(int argc, char** argv)
         global_count += 1; /* add first prime, 2 */
         printf("%d primes are less than or equal to %d\n", 
                global_count, n);
-        printf("Total elapsed time: %10.6f\n", 
+        printf("Total elapsed time: %10.6fs\n", 
                elapsed_time);
     } /* if */
 
