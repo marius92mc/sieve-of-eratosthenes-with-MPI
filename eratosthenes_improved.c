@@ -24,8 +24,7 @@
 #include "MyMPI.h"
 
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv)		{
     int     count;                /* local prime count */
     double  elapsed_time;         /* parallel execution time */
     int     first;                /* index of first multiple */
@@ -61,8 +60,7 @@ int main(int argc, char** argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
 
-    if (argc != 2)
-    {
+    if (argc != 2)    {
         if (id == 0) /* parent process */
             printf("Command line: %s <m>\n", argv[0]);
         MPI_Finalize();
@@ -85,8 +83,7 @@ int main(int argc, char** argv)
      */
     proc0_size = (n - 1) / p;
 
-    if ((2 + proc0_size) < (int)sqrt((double)n))
-    {
+    if ((2 + proc0_size) < (int)sqrt((double)n))    {
         if (id == 0) /* parent process */
             printf("Too many processes\n");
         MPI_Finalize();
@@ -98,20 +95,17 @@ int main(int argc, char** argv)
     primes = (char*)calloc(sqrt_n + 1, 1);
     for (prime_multiple = 2; 
          prime_multiple <= sqrt_n; 
-         prime_multiple += 2)
-    {
+         prime_multiple += 2)    {
         primes[prime_multiple] = 1;
     } /* for */
 
-    for (prime = 3; prime <= sqrt_n; prime += 2)
-    {
+    for (prime = 3; prime <= sqrt_n; prime += 2)    {
         if (primes[prime] == 1)
             continue;
 
         for (prime_multiple = prime << 1;
              prime_multiple <= sqrt_n; 
-             prime_multiple += prime)
-        {
+             prime_multiple += prime)    {
             primes[prime_multiple] = 1;
         }
     } /* for */
@@ -120,8 +114,7 @@ int main(int argc, char** argv)
      * allocate this process' share of the array 
      */
     marked = (char*)calloc(size * sizeof(char), 1);
-    if (marked == NULL)
-    {
+    if (marked == NULL)    {
         printf("Cannot allocate enough memory\n");
         MPI_Finalize();
         exit(1);
@@ -134,24 +127,18 @@ int main(int argc, char** argv)
     
     for (first_index_in_block = 0;
          first_index_in_block < size; 
-         first_index_in_block += num_per_block) 
-    {
-        for (prime = 3; prime <= sqrt_n; prime++)
-        {
+         first_index_in_block += num_per_block)    {
+        for (prime = 3; prime <= sqrt_n; prime++)       {
             if (primes[prime] == 1)
                 continue;
-            if (prime * prime > block_low_value)
-            {
+            if (prime * prime > block_low_value)   {
                 first = prime * prime;
             }
-           else 
-           {
-                if (!(block_low_value % prime))
-                {
+           else   {
+                if (!(block_low_value % prime))    {
                     first = block_low_value;
                 }
-                else 
-                {
+                else    {
                     first = prime - (block_low_value % prime) + 
                             block_low_value;
                 }
@@ -168,8 +155,7 @@ int main(int argc, char** argv)
                                BLOCK_LOW(id, p, n - 1);
            prime_doubled     = prime << 1;
            prime_step        = prime_doubled / BLOCK_STEP;
-           for (i = first; i <= high_value; i += prime_doubled)
-           {
+           for (i = first; i <= high_value; i += prime_doubled)   {
                marked[first_value_index] = 1;
                first_value_index += prime_step;
            } /* for */
@@ -198,8 +184,7 @@ int main(int argc, char** argv)
     elapsed_time += MPI_Wtime();
 
     /* print the results */
-    if (id == 0)
-    {
+    if (id == 0)   {
         global_count += 1; /* add first prime, 2 */
         printf("%d primes are less than or equal to %d\n", 
                global_count, n);
