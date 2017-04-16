@@ -1,5 +1,7 @@
 # MPI Sieve of Eratosthenes
 
+[![Build Status](https://travis-ci.org/marius92mc/sieve-of-eratosthenes-with-MPI.svg?branch=master)](https://travis-ci.org/marius92mc/sieve-of-eratosthenes-with-MPI)
+
 MPI Parallel program in C for The Sieve of Eratosthenes - project for Parallel and Concurrent Programming course
 
 
