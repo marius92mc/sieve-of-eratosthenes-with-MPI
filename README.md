@@ -8,11 +8,11 @@ Based on the initial version of the problem presented in the book
 
 
 ## Compile 
- 
+    $ cd src/  
     $ mpicc -o eratosthenes_improved eratosthenes_improved.c
 
 ## Run
-	
+    $ cd src/ 
     $ mpirun -np 5 eratosthenes_improved 152512534
 
 
