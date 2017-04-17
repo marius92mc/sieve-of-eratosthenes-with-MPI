@@ -4,5 +4,3 @@ before_install: sudo apt-get install libcr-dev mpich2 mpich2-doc
 
 script: cd src/; mpicc -o eratosthenes_improved eratosthenes_improved.c -lm
 
-branch: master
-
