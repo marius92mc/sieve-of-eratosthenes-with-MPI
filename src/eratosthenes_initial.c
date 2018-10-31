@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	int 	first;        /* index of first multiple */
 	int 	global_count; /* global prime count */
 	int     high_value;   /* highest value on this proc */
-	int 	i;            /* */
+	int 	i;            /* general iterator */
 	int 	id;           /* process id number */
 	int 	index;        /* index of current prime */ 
 	int 	low_value;    /* lowest value on this proc */
